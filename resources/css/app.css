@@ -1,0 +1,19 @@
+/* resources/css/app.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.table-skyblue {
+    background-color: #87CEEB; /* Sky Blue */
+}
+
+.table-skyblue th {
+    background-color: #66C2FF; /* Darker Sky Blue */
+    color: white;
+}
+
+.table-skyblue td {
+    background-color: #87CEEB; /* Sky Blue */
+    color: #333;
+}
