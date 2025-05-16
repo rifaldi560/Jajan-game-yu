@@ -1,6 +1,7 @@
-@php use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;@endphp
-
+@php
+    use Illuminate\Support\Facades\Route;
+    use Illuminate\Support\Facades\Auth;
+@endphp
 
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -11,37 +12,55 @@ use Illuminate\Support\Facades\Auth;@endphp
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>PRODUCT MADURIAR</title>
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
-
+    <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
-    <!-- Scripts -->
+    <!-- Styles -->
+    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            background-color:#171a21;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #c7d5e0;
+        }
+        .navbar, .dropdown-menu {
+            background-color: #171a21 !important;
+        }
+        .nav-link, .dropdown-item {
+            color: #ffffff !important;
+        }
+        .dropdown-item:hover {
+            background-color: #2c3038 !important;
+            color: #fff !important;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-md  shadow-sm" style="background-color: #171a21;">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
+                <a class="navbar-brand text-white" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
+                    <!-- Left Side -->
+                    <ul class="navbar-nav me-auto"></ul>
 
-                    </ul>
-
-                    <!-- Right Side Of Navbar -->
+                    <!-- Right Side -->
                     <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
@@ -56,7 +75,8 @@ use Illuminate\Support\Facades\Auth;@endphp
                             @endif
                         @else
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
 
@@ -65,15 +85,14 @@ use Illuminate\Support\Facades\Auth;@endphp
                                         {{ __('Logout') }}
                                     </a>
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                        style="display: none;">
                                         @csrf
                                     </form>
 
-                                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                                     <script>
                                         function confirmLogout(event) {
-                                            event.preventDefault(); // Mencegah logout langsung
-
+                                            event.preventDefault();
                                             Swal.fire({
                                                 title: 'Apakah Anda yakin ingin logout?',
                                                 text: "Anda harus login kembali jika ingin masuk!",

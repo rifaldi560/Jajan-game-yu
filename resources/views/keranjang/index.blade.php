@@ -2,10 +2,15 @@
 
 @section('content')
 <style>
+    body {
+        background-color: #1b2838;
+        color: #fff; /* Ensures text is readable on dark background */
+    }
+
     .card-product {
         display: flex;
         align-items: center;
-        background: #fff;
+        background: #2a2f38;
         border: none;
         border-radius: 12px;
         overflow: hidden;
@@ -20,8 +25,8 @@
     }
 
     .card-product img {
-        width: 150px;
-        height: 150px;
+        width: 350px;
+        height: 350px;
         object-fit: cover;
         border-radius: 0;
         background: #f0f0f0;
@@ -36,7 +41,7 @@
         margin-bottom: 8px;
         font-size: 1.25rem;
         font-weight: bold;
-        color: #333;
+        color: #ffffff;
     }
 
     .card-body p {
@@ -97,6 +102,7 @@
         }
     }
 </style>
+
 
 
 <div class="container">

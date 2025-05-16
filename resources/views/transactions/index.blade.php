@@ -6,6 +6,50 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    body {
+        background-color: #1b2838;
+        color: #fff;
+    }
+
+    h2 {
+        color: #fff;
+    }
+
+    .card {
+        background-color: #2a3b4c;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+    .container {
+        padding-top: 20px;
+    }
+</style>
+
 <div class="container">
     <h2>Your Transaction History MARDURIAR</h2>
 

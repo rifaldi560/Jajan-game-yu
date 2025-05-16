@@ -23,12 +23,12 @@
     </div>
 
     <!-- Alert Success -->
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
+  @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 
     <!-- Produk List -->
     @if($produks->isEmpty())
@@ -39,27 +39,29 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         @foreach($produks as $produk)
         <div class="col">
-            <div class="card h-100 shadow-sm border-0">
+            <div class="card h-100 text-white border-0 shadow-sm"
+                 style="background-color: #1B2538; transition: transform 0.2s; cursor: pointer;"
+                 onmouseover="this.style.transform='scale(1.02)'"
+                 onmouseout="this.style.transform='scale(1)'">
 
                 @if($produk->gambar)
-                <img src="{{ asset('storage/' . $produk->gambar) }}" alt="{{ $produk->nama }}" class="card-img-top" style="height: 220px; object-fit: cover;">
-            @else
-                <div class="d-flex align-items-center justify-content-center bg-light" style="height: 220px;">
-                    <span class="text-muted">Tidak Ada Gambar</span>
-                </div>
-            @endif
-
+                    <img src="{{ asset('storage/' . $produk->gambar) }}" alt="{{ $produk->nama }}" class="card-img-top rounded-top" style="height: 220px; object-fit: cover;">
+                @else
+                    <div class="d-flex align-items-center justify-content-center" style="height: 220px; background-color: #2D3A50;">
+                        <span class="text-muted">Tidak Ada Gambar</span>
+                    </div>
+                @endif
 
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-truncate">{{ $produk->nama }}</h5>
-                    <p class="text-muted small mb-1">{{ $produk->kategori->nama ?? 'Tanpa Kategori' }}</p>
-                    <p class="card-text small text-secondary mb-2">{{ Str::limit($produk->deskripsi, 50) }}</p>
-                    <h6 class="fw-bold text-primary mb-3">Rp {{ number_format($produk->harga, 0, ',', '.') }}</h6>
+                    <h5 class="card-title text-truncate text-white">{{ $produk->nama }}</h5>
+                    <p class="small text-light mb-1">{{ $produk->kategori->nama ?? 'Tanpa Kategori' }}</p>
+                    <p class="card-text small text-light mb-2">{{ Str::limit($produk->deskripsi, 50) }}</p>
+                    <h6 class="fw-bold text-warning mb-3">Rp {{ number_format($produk->harga, 0, ',', '.') }}</h6>
 
                     <div class="mt-auto">
                         <div class="d-grid gap-2">
-                            <a href="{{ route('produk.show', $produk->id) }}" class="btn btn-info btn-sm">Lihat Detail</a>
-                            <a href="{{ route('produk.edit', $produk->id) }}" class="btn btn-warning btn-sm">Edit Produk</a>
+                            <a href="{{ route('produk.show', $produk->id) }}" class="btn btn-sm text-white" style="background-color: #02CCFF;">Lihat Detail</a>
+                            <a href="{{ route('produk.edit', $produk->id) }}" class="btn btn-warning btn-sm text-dark">Edit Produk</a>
                             <button onclick="confirmDelete({{ $produk->id }})" class="btn btn-danger btn-sm">Hapus Produk</button>
                         </div>
                     </div>

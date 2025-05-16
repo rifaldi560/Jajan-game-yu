@@ -318,18 +318,8 @@
         $itchLinks = $itchLinks->unique();
     @endphp
 
-    <div class="receipt-footer">
-        <div class="footer-text">
-            <p>For more games and content, visit our page:</p>
-            @if($itchLinks->isNotEmpty())
-                @foreach($itchLinks as $link)
-                    <p><strong>Itch.io Link:</strong> <a href="{{ $link }}" target="_blank">{{ $link }}</a></p>
-                @endforeach
-            @else
-                <p><strong>Itch.io Link:</strong> Not Available</p>
-            @endif
-        </div>
-    </div>
+
+
 
 
         </div>

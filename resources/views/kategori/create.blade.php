@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm" style="background-color: #1B2538; color: #ffffff;">
                 <div class="card-header bg-success text-white">
                     <h5 class="mb-0">Tambah Kategori Game</h5>
                 </div>
@@ -31,8 +31,8 @@
                         @csrf
 
                         <div class="mb-3">
-                            <label for="nama" class="form-label">Nama Kategori</label>
-                            <input type="text" name="nama" class="form-control" placeholder="Masukkan nama kategori" required>
+                            <label for="nama" class="form-label text-white">Nama Kategori</label>
+                            <input type="text" name="nama" class="form-control bg-dark text-white border-secondary" placeholder="Masukkan nama kategori" required>
                         </div>
 
                         <div class="d-flex justify-content-between">

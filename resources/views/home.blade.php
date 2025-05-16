@@ -31,6 +31,12 @@
         flex-direction: column;
     }
 
+    .hover-card:hover {
+        transform: scale(1.02);
+        cursor: pointer;
+        box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+    }
+
     .card-img-top {
         height: 200px;
         object-fit: cover;
@@ -65,31 +71,6 @@
         margin: 0.5rem 0;
     }
 
-    .btn-game {
-        font-size: 0.9rem;
-        font-weight: bold;
-        padding: 8px 14px;
-        border-radius: 6px;
-    }
-
-    .btn-detail {
-        background-color: #66c0f4;
-        color: white;
-        border: none;
-    }
-
-    .btn-beli {
-        background-color: #a4de02;
-        color: #000;
-        border: none;
-    }
-
-    .btn-game:hover,
-    .btn-detail:hover,
-    .btn-beli:hover {
-        filter: brightness(1.1);
-    }
-
     .input-group input {
         background-color: #1b2838;
         border: 1px solid #66c0f4;
@@ -110,6 +91,10 @@
     .badge.bg-danger {
         background-color: #ff4c4c !important;
     }
+
+    a.text-decoration-none:hover {
+        text-decoration: none;
+    }
 </style>
 
 <div class="container py-5">
@@ -127,27 +112,6 @@
             </a>
         </div>
     </div>
-    <form action="{{ route('produk.index') }}" method="GET" class="mb-4 row g-2 align-items-center">
-        <div class="col-md-8    ">
-            <div class="input-group">
-
-            </div>
-        </div>
-        <div class="col-md-4 d-flex justify-content-end">
-            <form action="{{ route('produk.index') }}" method="GET">
-                <select name="kategori" class="form-select" onchange="this.form.submit()" style="max-width: 250px; background-color: #1b2838; color: #c7d5e0; border: 1px solid #66c0f4;">
-                    <option value="">Semua Kategori</option>
-                    @foreach($kategoris as $kategori)
-                        <option value="{{ $kategori->id }}" {{ request('kategori') == $kategori->id ? 'selected' : '' }}>
-                            {{ $kategori->nama }}
-                        </option>
-                    @endforeach
-                </select>
-            </form>
-        </div>
-
-    </form>
-
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -165,6 +129,19 @@
         </div>
     </form>
 
+    <form action="{{ route('produk.index') }}" method="GET" class="mb-4 row g-2 align-items-center">
+        <div class="col-md-4 offset-md-8 d-flex justify-content-end">
+            <select name="kategori" class="form-select" onchange="this.form.submit()" style="max-width: 250px; background-color: #1b2838; color: #c7d5e0; border: 1px solid #66c0f4;">
+                <option value="">Semua Kategori</option>
+                @foreach($kategoris as $kategori)
+                    <option value="{{ $kategori->id }}" {{ request('kategori') == $kategori->id ? 'selected' : '' }}>
+                        {{ $kategori->nama }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </form>
+
     @can('create', App\Models\Produk::class)
         <div class="mb-4">
             <a href="{{ route('produk.create') }}" class="btn btn-success btn-sm">
@@ -176,32 +153,23 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach($produks as $produk)
             <div class="col">
-                <div class="card h-100">
-                    @if($produk->gambar)
-                        <img src="{{ asset('storage/' . $produk->gambar) }}" class="card-img-top" alt="{{ $produk->nama }}">
-                    @else
-                        <div class="card-img-top bg-dark d-flex align-items-center justify-content-center">
-                            <span class="text-muted">Tidak Ada Gambar</span>
-                        </div>
-                    @endif
-                    <div class="card-body">
-                        <h6 class="card-title">{{ $produk->nama }}</h6>
-                        <p class="card-text">{{ \Illuminate\Support\Str::limit($produk->deskripsi, 120) }}</p>
-                        <p class="card-text"><strong>Kategori:</strong> {{ $produk->kategori->nama ?? '-' }}</p>
-                        <p class="price-tag">Rp {{ number_format($produk->harga, 0, ',', '.') }}</p>
-                        <div class="d-flex gap-2 mt-2">
-                            <a href="{{ route('produk.show', $produk->id) }}" class="btn btn-detail btn-game w-50">Detail</a>
-                            <button class="btn btn-beli btn-game w-50" data-id="{{ $produk->id }}">
-                                <i class="fa fa-cart-plus me-1"></i> Beli
-                            </button>
-                        </div>
-                        @if($produk->itch_io_link)
-                            <a href="{{ $produk->itch_io_link }}" target="_blank" class="btn btn-success btn-game btn-sm w-100 mt-2">
-                                <i class="fa fa-gamepad me-1"></i> Mainkan di Itch.io
-                            </a>
+                <a href="{{ route('produk.show', $produk->id) }}" class="text-decoration-none text-light">
+                    <div class="card h-100 hover-card">
+                        @if($produk->gambar)
+                            <img src="{{ asset('storage/' . $produk->gambar) }}" class="card-img-top" alt="{{ $produk->nama }}">
+                        @else
+                            <div class="card-img-top bg-dark d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <span class="text-muted">Tidak Ada Gambar</span>
+                            </div>
                         @endif
+                        <div class="card-body">
+                            <h6 class="card-title">{{ $produk->nama }}</h6>
+                            <p class="card-text">{{ \Illuminate\Support\Str::limit($produk->deskripsi, 120) }}</p>
+                            <p class="card-text"><strong>Kategori:</strong> {{ $produk->kategori->nama ?? '-' }}</p>
+                            <p class="price-tag">Rp {{ number_format($produk->harga, 0, ',', '.') }}</p>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
         @endforeach
     </div>
@@ -212,46 +180,4 @@
         </div>
     @endif
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.btn-beli').forEach(button => {
-        button.addEventListener('click', () => {
-            const produkId = button.getAttribute('data-id');
-
-            fetch("{{ route('keranjang.store') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ id: produkId, quantity: 1 })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('cart-count').innerText = data.totalItems;
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: 'Produk ditambahkan ke keranjang.',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-                }
-            })
-            .catch(() => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: 'Terjadi kesalahan saat menambahkan ke keranjang.',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            });
-        });
-    });
-});
-</script>
 @endsection

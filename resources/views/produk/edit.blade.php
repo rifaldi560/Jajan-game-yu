@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-lg">
-                <div class="card-header bg-warning text-white">
+                <div class="card-header" style="background-color: #1B2538; color: white;">
                     <h4 class="mb-0">Edit Produk</h4>
                 </div>
                 <div class="card-body">
@@ -57,7 +57,23 @@
                         {{-- Link Itch.io --}}
                         <div class="mb-3">
                             <label for="itch_io_link" class="form-label">Link Itch.io</label>
-                            <input type="url" name="itch_io_link" class="form-control" value="{{ $produk->itch_io_link }}" placeholder="Masukkan link game di Itch.io" required>
+                            <input type="url" name="itch_io_link" class="form-control" value="{{ $produk->itch_io_link }}" placeholder="https://example.itch.io/game" required>
+                        </div>
+
+                        {{-- Upload File Game --}}
+                        <div class="mb-3">
+                            <label for="file_game" class="form-label">Upload File Game (ZIP)</label>
+                            <input type="file" name="file_game" class="form-control">
+                            @if($produk->file_game)
+                                <small class="form-text text-muted">
+                                    File saat ini:
+                                    @if(str_contains($produk->file_game, 'games_extracted'))
+                                        <a href="{{ route('produk.play', $produk->id) }}" target="_blank" style="color: #02CCFF;">Lihat Detail / Mainkan</a>
+                                    @else
+                                        <a href="{{ route('produk.download', $produk->id) }}" style="color: #02CCFF;">Download File Game</a>
+                                    @endif
+                                </small>
+                            @endif
                         </div>
 
                         {{-- Gambar Produk --}}
@@ -75,7 +91,7 @@
                         </div>
 
                         {{-- Deskripsi Produk --}}
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <label for="deskripsi">Deskripsi</label>
                             <textarea name="deskripsi" id="deskripsi" class="form-control" rows="5">{{ old('deskripsi', $produk->deskripsi ?? '') }}</textarea>
                         </div>
@@ -91,7 +107,7 @@
 
                 </div>
             </div>
-        </div>
+        </div>      
     </div>
 </div>
 @endsection

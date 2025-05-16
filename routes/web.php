@@ -1,13 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\ProdukController;
-use App\Http\Controllers\KeranjangController;
-use App\Http\Controllers\TransactionsController;
+use App\Http\Controllers\StorageController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\KeranjangController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\TransactionsController;
 
 // Halaman Utama
 Route::get('/', function () {
@@ -41,6 +42,12 @@ Route::middleware(['auth'])->group(function () {
     // Produk
     Route::resource('produk', ProdukController::class);
     Route::get('produk/{id}', [ProdukController::class, 'show'])->name('produk.show');
+
+// Tambahkan route untuk download
+
+Route::get('/produk/{id}/download', [StorageController::class, 'downloadGame'])->name('storage.downloadGame');// Route untuk memainkan game (misalnya menampilkan Unity WebGL)
+Route::get('/produk/{id}/play', [ProdukController::class, 'play'])->name('produk.play');
+
 
 
     // Keranjang
