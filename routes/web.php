@@ -41,15 +41,18 @@ Route::middleware(['auth'])->group(function () {
 
     // Produk
     Route::resource('produk', ProdukController::class);
-    Route::get('produk/{id}', [ProdukController::class, 'show'])->name('produk.show');
+Route::get('/produk/{id}/play', [ProdukController::class, 'play'])->name('produk.play');
+Route::get('/produk/{id}', [ProdukController::class, 'show'])->name('produk.show');
+Route::post('/produk/store', [ProdukController::class, 'store'])->name('produk.store');
+
+
+
 
 // Tambahkan route untuk download
 
-Route::get('/produk/{id}/download', [StorageController::class, 'downloadGame'])->name('storage.downloadGame');// Route untuk memainkan game (misalnya menampilkan Unity WebGL)
-Route::get('/produk/{id}/play', [ProdukController::class, 'play'])->name('produk.play');
 
-
-
+Route::get('/produk/{id}/download', [StorageController::class, 'downloadGame'])
+    ->name('storage.downloadGame');
     // Keranjang
     Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
     Route::post('/keranjang/store', [KeranjangController::class, 'store'])->name('keranjang.store');

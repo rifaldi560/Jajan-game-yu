@@ -177,7 +177,8 @@
 
                     {{-- USER: Beli, Itch.io, Download & Mainkan --}}
                     @cannot('update', $produk)
-                        <div class="d-grid gap-2 mt-2">
+                  <div class="d-flex gap-2 flex-wrap mt-2">
+
                             {{-- Tombol Beli --}}
                             <button class="btn btn-beli btn-game" data-id="{{ $produk->id }}">
                                 <i class="fa fa-cart-plus me-1"></i> Beli
@@ -197,14 +198,9 @@
                                 </a>
                             @endif
 
-                           @if(str_contains($produk->file_game, 'games_extracted'))
+@if($produk->file_game)
     <a href="{{ route('produk.play', $produk->id) }}" class="btn btn-primary">Mainkan Game</a>
 @endif
-
-@if(str_contains($produk->file_game, 'games_zip'))
-    <a href="{{ route('produk.download', $produk->id) }}" class="btn btn-secondary">Download Game</a>
-@endif
-
                         </div>
                     @endcannot
 

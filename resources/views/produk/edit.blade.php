@@ -10,6 +10,7 @@
                 </div>
                 <div class="card-body">
 
+                    {{-- Alert sukses --}}
                     @if(session('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             {{ session('success') }}
@@ -57,7 +58,7 @@
                         {{-- Link Itch.io --}}
                         <div class="mb-3">
                             <label for="itch_io_link" class="form-label">Link Itch.io</label>
-                            <input type="url" name="itch_io_link" class="form-control" value="{{ $produk->itch_io_link }}" placeholder="https://example.itch.io/game" required>
+                            <input type="url" name="itch_io_link" class="form-control" value="{{ $produk->itch_io_link }}" placeholder="https://example.itch.io/game">
                         </div>
 
                         {{-- Upload File Game --}}
@@ -70,7 +71,7 @@
                                     @if(str_contains($produk->file_game, 'games_extracted'))
                                         <a href="{{ route('produk.play', $produk->id) }}" target="_blank" style="color: #02CCFF;">Lihat Detail / Mainkan</a>
                                     @else
-                                        <a href="{{ route('produk.download', $produk->id) }}" style="color: #02CCFF;">Download File Game</a>
+                                        <a href="{{ route('storage.downloadGame', $produk->id) }}" style="color: #02CCFF;">Download File Game</a>
                                     @endif
                                 </small>
                             @endif
@@ -79,35 +80,35 @@
                         {{-- Gambar Produk --}}
                         <div class="mb-3">
                             <label for="gambar" class="form-label">Gambar Produk</label><br>
-
                             @if($produk->gambar)
                                 <img src="{{ asset('storage/' . $produk->gambar) }}" alt="Gambar Produk" width="100" class="mb-2" style="border-radius: 8px;">
                             @else
                                 <p class="text-muted">Belum ada gambar</p>
                             @endif
-
                             <input type="file" name="gambar" class="form-control mt-2">
                             <small class="text-muted">Kosongkan jika tidak ingin mengganti gambar</small>
                         </div>
 
                         {{-- Deskripsi Produk --}}
-                        <div class="form-group mb-3">
-                            <label for="deskripsi">Deskripsi</label>
+                        <div class="mb-3">
+                            <label for="deskripsi" class="form-label">Deskripsi</label>
                             <textarea name="deskripsi" id="deskripsi" class="form-control" rows="5">{{ old('deskripsi', $produk->deskripsi ?? '') }}</textarea>
                         </div>
 
-                        {{-- Tombol Simpan --}}
-                        <button type="submit" class="btn btn-success">
-                            <i class="fa fa-save"></i> Simpan Perubahan
-                        </button>
-
-                        {{-- Tombol Kembali --}}
-                        <a href="{{ route('admin.home') }}" class="btn btn-secondary">Kembali</a>
+                        {{-- Tombol Aksi --}}
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-save"></i> Simpan Perubahan
+                            </button>
+                            <a href="{{ route('admin.home') }}" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left"></i> Kembali
+                            </a>
+                        </div>
                     </form>
 
                 </div>
             </div>
-        </div>      
+        </div>
     </div>
 </div>
 @endsection

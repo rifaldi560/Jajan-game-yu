@@ -19,7 +19,7 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+   
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
     <!-- SweetAlert -->
@@ -33,6 +33,13 @@
         .navbar, .dropdown-menu {
             background-color: #171a21 !important;
         }
+
+        .navbar-brand img {
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+        }
+
         .nav-link, .dropdown-item {
             color: #ffffff !important;
         }
@@ -47,7 +54,7 @@
         <nav class="navbar navbar-expand-md  shadow-sm" style="background-color: #171a21;">
             <div class="container">
                 <a class="navbar-brand text-white" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                    <img src="/logo.jpeg" alt="">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"

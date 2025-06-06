@@ -160,7 +160,7 @@
 
         <h4 class="mt-3">Total Belanja: <strong>Rp {{ number_format($total, 0, ',', '.') }}</strong></h4>
 
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 flex-wrap mt-2">
             <button class="btn btn-warning clear-cart-btn">
                 <i class="fa fa-trash"></i> Kosongkan Keranjang
             </button>
@@ -173,7 +173,7 @@
         </div>
     @else
         <div class="d-flex flex-column justify-content-center align-items-center" style="min-height: 70vh;">
-            <h3 class="text-muted mb-4">🛒 Keranjang belanja kamu kosong</h3>
+            <h3 class="text-muted mb-4" style="color: #fff !important;">🛒 Keranjang belanja kamu kosong</h3>
             <a href="{{ route('home') }}" class="btn btn-lg btn-primary text-white" style="background-color: #007bff;">
                 <i class="fa fa-home me-2"></i> Kembali ke Home
             </a>

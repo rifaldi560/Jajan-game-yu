@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manduriar Transaction Receipt</title>
+    <title>Manduriar Transaction Receipt Game </title>
     <style>
         :root {
             --primary-color: #ff6f61; /* Manduriar's primary color */
@@ -243,8 +243,8 @@
 
     <div class="receipt-container">
         <div class="receipt-header">
-            <img class="company-logo" src="path/to/manduriar-logo.png" alt="Manduriar Logo">
-            <div class="receipt-title">Manduriar Transaction Receipt</div>
+
+            <div class="receipt-title">Manduriar Transaction Receipt Game </div>
             <div class="receipt-subtitle">Thank you for choosing Manduriar!</div>
         </div>
 

@@ -1,195 +1,205 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use ZipArchive;
 use App\Models\Produk;
 use App\Models\Kategori;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use ZipArchive;
 
-class ProdukController extends Controller
-{
-    public function index(Request $request)
+
+    class ProdukController extends Controller
+    {
+        public function index(Request $request)
     {
         $kategoris = Kategori::all();
         $produkQuery = Produk::with('kategori');
 
+        // Filter berdasarkan keyword pencarian
         if ($request->filled('search')) {
             $produkQuery->where(function($query) use ($request) {
                 $query->where('nama', 'like', '%' . $request->search . '%')
-                      ->orWhereHas('kategori', function ($q) use ($request) {
-                          $q->where('nama', 'like', '%' . $request->search . '%');
-                      });
+                    ->orWhereHas('kategori', function ($q) use ($request) {
+                        $q->where('nama', 'like', '%' . $request->search . '%');
+                    });
             });
         }
 
-        $produks = $produkQuery->paginate(10);
+        // Filter berdasarkan kategori
+        if ($request->filled('kategori')) {
+            $produkQuery->where('kategori_id', $request->kategori);
+        }
+
+        $produks = $produkQuery->paginate(10)->appends($request->query());
+
         return view('home', compact('produks', 'kategoris'));
     }
 
-    public function create()
-    {
-        $kategoris = Kategori::all();
-        return view('produk.create', compact('kategoris'));
-    }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'kode_produk' => 'required|unique:produks,kode_produk',
-            'nama' => 'required',
-            'harga' => 'required|numeric|min:0',
-            'kategori_id' => 'required|exists:kategoris,id',
-            'itch_io_link' => 'required|url',
-            'file_game' => 'nullable|file|mimes:zip',
-            'gambar' => 'nullable|image',
-            'deskripsi' => 'nullable|string',
-        ]);
-
-        $gambarName = $request->file('gambar') ? $request->file('gambar')->store('gambar_produk', 'public') : null;
-
-        $extractedFolder = null;
-        if ($request->hasFile('file_game')) {
-            $file = $request->file('file_game');
-            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('public/games_zip', $filename);
-
-            $extractFolderName = pathinfo($filename, PATHINFO_FILENAME);
-            $extractPath = storage_path("app/public/games_extracted/{$extractFolderName}");
-
-            if (!file_exists($extractPath)) {
-                mkdir($extractPath, 0777, true);
-            }
-
-            $zip = new ZipArchive;
-            if ($zip->open(storage_path("app/{$path}")) === TRUE) {
-                $zip->extractTo($extractPath);
-                $zip->close();
-                $extractedFolder = 'games_extracted/' . $extractFolderName;
-            } else {
-                return back()->with('error', 'Gagal mengekstrak file ZIP.');
-            }
+        public function create()
+        {
+            $kategoris = Kategori::all();
+            return view('produk.create', compact('kategoris'));
         }
 
-        Produk::create([
-            'kode_produk' => $validated['kode_produk'],
-            'nama' => $validated['nama'],
-            'harga' => $validated['harga'],
-            'kategori_id' => $validated['kategori_id'],
-            'itch_io_link' => $validated['itch_io_link'],
-            'file_game' => $extractedFolder,
-            'gambar' => $gambarName,
-            'deskripsi' => $validated['deskripsi'],
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'kode_produk' => 'required|string|max:255|unique:produks,kode_produk',
+        'nama' => 'required|string|max:255',
+        'harga' => 'required|numeric|min:0',
+        'kategori_id' => 'required|exists:kategoris,id',
+        'itch_io_link' => 'nullable|url',
+        'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'file_game' => 'nullable|file|mimes:zip|max:51200', // max 50MB
+        'deskripsi' => 'nullable|string',
+    ]);
 
-        return redirect()->route('admin.home')->with('success', 'Produk berhasil ditambahkan!');
+    $data = $request->only(['kode_produk', 'nama', 'harga', 'kategori_id', 'itch_io_link', 'deskripsi']);
+
+    // Upload gambar (jika ada)
+    if ($request->hasFile('gambar')) {
+        $gambarPath = $request->file('gambar')->store('gambar_produk', 'public');
+        $data['gambar'] = $gambarPath;
     }
 
-    public function edit($id)
+    // Upload dan ekstrak file game (jika ada)
+    if ($request->hasFile('file_game')) {
+        $zip = $request->file('file_game');
+        $zipName = Str::uuid();
+        $zipPath = storage_path('app/public/games_zip/' . $zipName . '.zip');
+        $extractPath = storage_path('app/public/games_extracted/' . $zipName);
+
+        // Simpan zip
+        $zip->move(storage_path('app/public/games_zip'), $zipName . '.zip');
+
+        // Ekstrak
+        $zipArchive = new ZipArchive;
+        if ($zipArchive->open($zipPath) === TRUE) {
+            $zipArchive->extractTo($extractPath);
+            $zipArchive->close();
+            $data['file_game'] = 'games_extracted/' . $zipName;
+        } else {
+            return back()->with('error', 'Gagal mengekstrak file ZIP.');
+        }
+    }
+
+    Produk::create($data);
+
+    return redirect()->route('admin.home')->with('success', 'Produk berhasil ditambahkan.');
+}
+
+        public function edit($id)
     {
         $produk = Produk::findOrFail($id);
         $kategoris = Kategori::all();
-        return view('produk.edit', compact('produk', 'kategoris'));
-    }
+
+    return view('produk.edit', compact('produk', 'kategoris'));
+}
 
 public function update(Request $request, $id)
 {
     $produk = Produk::findOrFail($id);
 
-    // Validasi input
-    $validated = $request->validate([
-        'kode_produk' => 'required|string|max:255',
-        'nama' => 'required|string|max:255',
+    // Validasi data umum
+    $request->validate([
+        'kode_produk' => 'required',
+        'nama' => 'required',
         'harga' => 'required|numeric|min:0',
         'kategori_id' => 'required|exists:kategoris,id',
-        'itch_io_link' => 'nullable|url',
+        'itch_io_link' => 'required|url',
         'deskripsi' => 'nullable|string',
-        'file_game' => 'nullable|file|mimes:zip',
-        'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'gambar' => 'nullable|image',
+        'file_game' => 'nullable|mimes:zip|max:500000',
     ]);
 
-    // Perbarui data produk
-    $produk->kode_produk = $validated['kode_produk'];
-    $produk->nama = $validated['nama'];
-    $produk->harga = $validated['harga'];
-    $produk->kategori_id = $validated['kategori_id'];
-    $produk->itch_io_link = $validated['itch_io_link'];
-    $produk->deskripsi = $validated['deskripsi'];
-
-    // Perbarui file game jika ada
+    // Proses file ZIP jika ada
     if ($request->hasFile('file_game')) {
-        // Hapus file game lama jika ada
-        if ($produk->file_game && Storage::disk('public')->exists($produk->file_game)) {
-            Storage::disk('public')->delete($produk->file_game);
-        }
+        $zip = new \ZipArchive;
+        $zipFile = $request->file('file_game');
+        $folderName = 'game_' . time();
+        $extractPath = public_path('games/' . $folderName);
 
-        // Simpan file game baru
-        $produk->file_game = $request->file('file_game')->store('games', 'public');
+        if ($zip->open($zipFile) === TRUE) {
+            $zip->extractTo($extractPath);
+            $zip->close();
+
+            // Hapus folder lama jika ada
+            if ($produk->file_game && File::exists(public_path('games/' . $produk->file_game))) {
+                File::deleteDirectory(public_path('games/' . $produk->file_game));
+            }
+
+            $produk->file_game = $folderName;
+        } else {
+            return back()->with('error', 'Gagal mengekstrak file ZIP.');
+        }
     }
 
-    // Perbarui gambar produk jika ada
+    // Proses gambar jika ada
     if ($request->hasFile('gambar')) {
-        // Hapus gambar lama jika ada
-        if ($produk->gambar && Storage::disk('public')->exists($produk->gambar)) {
-            Storage::disk('public')->delete($produk->gambar);
-        }
-
-        // Simpan gambar baru
-        $produk->gambar = $request->file('gambar')->store('gambar_produk', 'public');
-    }
-
-    // Simpan perubahan ke database
-    $produk->save();
-
-    // Redirect ke halaman admin.home dengan pesan sukses
-    return redirect()->route('admin.home')->with('success', 'Produk berhasil diperbarui.');
-}
-    public function destroy($id)
-    {
-        $produk = Produk::findOrFail($id);
-
-        if ($produk->gambar) {
+        if ($produk->gambar && Storage::exists('public/' . $produk->gambar)) {
             Storage::delete('public/' . $produk->gambar);
         }
 
-        if ($produk->file_game) {
-            Storage::deleteDirectory('public/' . $produk->file_game);
-        }
-
-        $produk->delete();
-
-        return redirect()->route('admin.home')->with('success', 'Produk berhasil dihapus');
+        $gambarPath = $request->file('gambar')->store('gambar_produk', 'public');
+        $produk->gambar = $gambarPath;
     }
 
-    public function show($id)
-    {
-        $produk = Produk::findOrFail($id);
-        return view('produk.show', compact('produk'));
-    }
+    // Simpan data lainnya
+    $produk->kode_produk = $request->kode_produk;
+    $produk->nama = $request->nama;
+    $produk->harga = $request->harga;
+    $produk->kategori_id = $request->kategori_id;
+    $produk->itch_io_link = $request->itch_io_link;
+    $produk->deskripsi = $request->deskripsi;
 
-   public function download($id)
-{
-    $produk = Produk::findOrFail($id);
+    // ⬅️ YANG PENTING: simpan ke database!
+    $produk->save();
 
-    if (!$produk->file_game || !Storage::disk('public')->exists($produk->file_game)) {
-        abort(404);
-    }
-
-    return response()->download(storage_path('app/public/' . $produk->file_game));
+    return redirect()->route('admin.home')->with('success', 'Produk berhasil diperbarui.');
 }
 
+        public function show($id)
+        {
+            $produk = Produk::findOrFail($id);
+            return view('produk.show', compact('produk'));
+        }
 
-    public function play($id)
+    public function downloadGame($id)
     {
         $produk = Produk::findOrFail($id);
-        $indexPath = public_path("storage/{$produk->file_game}/index.html");
 
-        if (!file_exists($indexPath)) {
+        if (!$produk->file_game || !Storage::disk('public')->exists($produk->file_game)) {
+            abort(404, 'File game tidak ditemukan');
+        }
+
+        $filePath = Storage::disk('public')->path($produk->file_game);
+        return response()->download($filePath);
+    }
+
+
+        public function play($id)
+    {
+        $produk = Produk::findOrFail($id);
+        $folder = $produk->file_game;
+
+        if (!$folder || !File::exists(public_path("games/{$folder}/index.html"))) {
             abort(404, 'File game tidak ditemukan.');
         }
 
-        $url = asset("storage/{$produk->file_game}/index.html");
-        return view('produk.play', compact('produk', 'url'));
+        return view('produk.play', compact('folder', 'produk'));
     }
+    // app/Http/Controllers/ProdukController.php
+
+public function destroy($id)
+{
+    $produk = Produk::findOrFail($id);
+    $produk->delete();
+
+    return redirect()->route('produk.index')->with('success', 'Produk berhasil dihapus');
 }
+
+
+    }
